@@ -11,9 +11,11 @@ static unsigned char OUTPUT_TO_FILE = 0;
 int main(int argc, char **argv)
 {
     FILE *file;
-    int i, v_num, a_num, v1, v2, c;
-    int err = 0;
-    char line[90000] = {0};
+    int i, v_num, a_num;
+    unsigned int v1 = 0;
+    unsigned int v2 = 0;
+    unsigned int c = 0;
+    char line[516] = {0};
     graph *g = NULL;
 
     for (i = 1; i < argc; i++)
@@ -25,11 +27,11 @@ int main(int argc, char **argv)
             if (file == NULL)
                 return -1;
             fgets(line, sizeof(line), file);
-            err = sscanf(line, "%d %d", &v_num, &a_num);
+            sscanf(line, "%d %d", &v_num, &a_num);
             g = new_graph(v_num);
             while (fgets(line, sizeof(line), file))
             {
-                sscanf(line, "%d %d %d", &v1, &v2, &c);
+                sscanf(line, "%u %u %u", &v1, &v2, &c);
                 add_edge(g, v1 - 1, v2 - 1, c);
             }
             fclose(file);
@@ -50,13 +52,11 @@ int main(int argc, char **argv)
     }
 
     if(g != NULL) {
-        g->initialVertex = 0;
-        new_dijkstra(g);
         if (OUTPUT_TO_FILE)
         {
-            print_graph(g, OUTPUT_FILE);
+            dijkstra(g, INITIAL_VERTICE, OUTPUT_FILE);
         } else {
-            print_graph(g, NULL);
+            dijkstra(g, INITIAL_VERTICE, NULL);
         }
         free(g);
     }
